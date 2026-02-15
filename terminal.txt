@@ -1,0 +1,9 @@
+dotnet new console -n 553501_Бончковская
+cd 553501_Бончковская
+code .
+dotnet add package AutoMapper
+dotnet run (с отладкой)
+dotnet run --configuration Release (без)
+dir
+type _553501_Бончковская.csproj
+
