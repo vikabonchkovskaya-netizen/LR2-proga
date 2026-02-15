@@ -12,7 +12,6 @@ namespace LR2
 
         static void Main(string[] args)
         {
-
             bool programRunning = true;
             while (programRunning)
             {
@@ -21,8 +20,7 @@ namespace LR2
                 Console.WriteLine("1. Задание 1: Существует ли треугольник со сторонами a, b, c?");
                 Console.WriteLine("2. Задание 2: Точка (x, y) относительно прямоугольника [0;10]×[0;5]");
                 Console.WriteLine("3. Выход");
-                Console.Write("Выберите номер задания (1, 2 или 3): ");
-
+             
                 if (!TryReadMenuChoice(out int menuChoice))
                 {
                     Console.WriteLine("\n Некорректный ввод. Введите 1, 2 или 3.\n");
@@ -33,9 +31,11 @@ namespace LR2
                 {
                     case 1:
                         SolveTriangleTask();
+                        PauseBeforeReturnToMenu(); // Пауза после выполнения задания
                         break;
                     case 2:
                         SolvePointTask();
+                        PauseBeforeReturnToMenu(); // Пауза после выполнения задания
                         break;
                     case 3:
                         Environment.Exit(0); // Завершить программу полностью
@@ -45,6 +45,13 @@ namespace LR2
                         break;
                 }
             }
+        }
+
+        // ——————— Пауза перед возвратом в меню ———————
+        static void PauseBeforeReturnToMenu()
+        {
+           Console.ReadKey(true); // true — не выводить символ нажатой клавиши
+            Console.WriteLine(); // Перевод строки после нажатия
         }
 
         // ——————— Чтение выбора меню ———————
@@ -63,35 +70,33 @@ namespace LR2
         // ——————— ЗАДАНИЕ 1: Треугольник ———————
         static void SolveTriangleTask()
         {
-            Console.WriteLine("Введите длины трёх сторон:");
+          Console.WriteLine("Введите длины трёх сторон (положительные числа):");
 
-            double a, b, c;
-            if (!TryReadPositiveDouble("a", out a) ||
-                !TryReadPositiveDouble("b", out b) ||
-                !TryReadPositiveDouble("c", out c))
-            {
-                Console.WriteLine(" Ошибка ввода (некорректные данные).\n");
-                return; // вернуться в главное меню
-            }
+            double a = ReadPositiveDouble("a");
+            double b = ReadPositiveDouble("b");
+            double c = ReadPositiveDouble("c");
 
             bool exists = IsTrianglePossible(a, b, c);
             Console.WriteLine($"\nСтороны: a = {a:F2}, b = {b:F2}, c = {c:F2}");
             Console.WriteLine(exists ? " Треугольник существует." : " Треугольник НЕ существует.");
         }
 
-        static bool TryReadPositiveDouble(string name, out double value)
+        // Вводит положительное число, повторяет, пока не введено корректное
+        static double ReadPositiveDouble(string name)
         {
-            value = 0;
-            Console.Write($"Введите сторону {name}: ");
-            string? input = Console.ReadLine();
-            if (double.TryParse(input, out double v) && v > 0)
+            double value;
+            while (true)
             {
-                value = v;
-                return true;
-            }
-            else
-            {
-                return false;
+                Console.Write($"Введите сторону {name}: ");
+                string? input = Console.ReadLine();
+                if (double.TryParse(input, out value) && value > 0)
+                {
+                    return value;
+                }
+                else
+                {
+                    Console.WriteLine(" Ошибка: введите положительное число.");
+                }
             }
         }
 
@@ -103,28 +108,32 @@ namespace LR2
         // ——————— ЗАДАНИЕ 2: Точка в прямоугольнике ———————
         static void SolvePointTask()
         {
-            Console.WriteLine("Введите координаты точки:");
+           Console.WriteLine("Введите координаты точки:");
 
-            double x, y;
-            if (!TryReadDouble("x", out x) || !TryReadDouble("y", out y))
-            {
-                Console.WriteLine(" Ошибка ввода (некорректные данные).\n");
-                return; // вернуться в главное меню
-            }
+            double x = ReadDouble("x");
+            double y = ReadDouble("y");
 
             string result = CheckPointPosition(x, y);
             Console.WriteLine($"\nТочка ({x:F2}, {y:F2}) → {result}");
         }
 
-        static bool TryReadDouble(string name, out double value)
+        // Вводит число, повторяет, пока не введено корректное
+        static double ReadDouble(string name)
         {
-            value = 0;
-            Console.Write($"Введите координату {name}: ");
-            string? input = Console.ReadLine();
-            bool success = double.TryParse(input, out value);
-            if (!success)
-                Console.WriteLine("Ошибка: введите число.");
-            return success;
+            double value;
+            while (true)
+            {
+                Console.Write($"Введите координату {name}: ");
+                string? input = Console.ReadLine();
+                if (double.TryParse(input, out value))
+                {
+                    return value;
+                }
+                else
+                {
+                    Console.WriteLine(" Ошибка: введите число.");
+                }
+            }
         }
 
         static string CheckPointPosition(double x, double y)
